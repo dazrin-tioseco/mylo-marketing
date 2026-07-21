@@ -378,6 +378,14 @@ section{ position: relative; z-index: 2; padding: 96px 0; }
   .gallery-item.g-tall{ grid-row: span 1; }
 }
 
+/* Fill the trailing gap in the 6-col bento: with one 2x2 tile + one wide tile,
+   six items leave the bottom-right two cells empty. Widen the last two tiles so
+   row 2 tiles completely. Desktop only — the 2-col mobile layout above is unaffected. */
+@media (min-width: 901px){
+  .gallery-grid .gallery-item:nth-child(5),
+  .gallery-grid .gallery-item:nth-child(6){ grid-column: span 2; }
+}
+
 .gallery-note{
   display:flex; align-items:center; gap: .7em;
   margin-top: 1.6rem;
