@@ -201,30 +201,87 @@ section{ position: relative; z-index: 2; padding: 96px 0; }
 
 @media (max-width: 860px){
   .main-nav{
-    position: fixed; inset: 76px 0 0 0;
-    /* explicit height: relying on top+bottom stretch collapsed the panel to
-       its padding, leaving most items floating with no background behind them */
-    height: calc(100vh - 76px);
-    height: calc(100dvh - 76px);
+    position: fixed; top: 76px; left: 0; right: 0;
+    /* hug the content instead of filling the whole screen */
+    height: auto;
+    max-height: calc(100dvh - 76px);
     overflow-y: auto;
-    background: var(--bg);
+    /* heavily frosted panel — blur + high opacity make page text behind unreadable
+       (Safari/iOS renders the blur strongly; the opacity covers weaker-blur browsers) */
+    background: rgba(21, 18, 31, .95);
+    backdrop-filter: blur(40px) saturate(160%);
+    -webkit-backdrop-filter: blur(40px) saturate(160%);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 24px 44px -26px rgba(0,0,0,.75);
     flex-direction: column; justify-content: flex-start;
-    padding: 2.5rem 24px;
-    transform: translateY(-8px);
+    padding: .9rem 14px 1.25rem;
+    /* springy slide-down entrance */
+    transform: translateY(-14px);
     opacity: 0; visibility: hidden;
-    transition: opacity .3s var(--ease), transform .3s var(--ease), visibility .3s;
+    transition: opacity .28s var(--ease), transform .34s var(--spring), visibility .28s;
   }
   .main-nav.open{ opacity:1; visibility: visible; transform: translateY(0); }
-  .main-nav ul{ flex-direction: column; gap: .6rem; width:100%; }
-  .main-nav a{ font-size: 1.4rem; }
-  .main-nav ul a{
-    display: block; width: 100%;
-    padding: .55em .9em; border-radius: 12px;
-    transition: background .2s var(--ease), color .2s var(--ease);
+
+  .main-nav ul{ flex-direction: column; gap: .25rem; width:100%; }
+  .main-nav a{ font-size: 1.25rem; }
+
+  /* items settle in with a light stagger when the menu opens */
+  .main-nav ul li{
+    opacity: 0; transform: translateY(6px);
+    transition: opacity .3s var(--ease), transform .42s var(--spring);
   }
-  .main-nav ul a:hover, .main-nav ul a:focus-visible{ background: var(--bg-alt-2); color: var(--text); }
-  .main-nav ul a[aria-current="page"]{ background: var(--bg-alt); }
-  .main-nav .btn{ margin-top: .8rem; width: 100%; }
+  .main-nav.open ul li{ opacity: 1; transform: translateY(0); }
+  .main-nav.open ul li:nth-child(1){ transition-delay: .06s; }
+  .main-nav.open ul li:nth-child(2){ transition-delay: .12s; }
+  .main-nav.open ul li:nth-child(3){ transition-delay: .18s; }
+
+  /* menu links: animated pill highlight on hover / active / current page */
+  .main-nav ul a{
+    position: relative; z-index: 0;
+    display: flex; align-items: center;
+    width: 100%;
+    padding: .72em 1em;
+    border-radius: 14px;
+    color: var(--text-dim);
+    transform-origin: left center;
+    transition: color .25s var(--ease), transform .3s var(--spring);
+  }
+  .main-nav ul a::before{
+    content:""; position: absolute; inset: -2px; z-index: -1;
+    border-radius: 18px;
+    /* soft blurred gradient glow — no hard edge */
+    background: linear-gradient(100deg, rgba(255,93,115,.42), rgba(255,184,77,.26));
+    filter: blur(9px);
+    opacity: 0; transform: scale(.9);
+    transition: opacity .28s var(--ease), transform .32s var(--spring), background .26s var(--ease), filter .26s var(--ease), border-color .26s var(--ease);
+  }
+  /* hover / focus: vibrant pill and the label grows */
+  .main-nav ul a:hover, .main-nav ul a:focus-visible{ color: var(--text); transform: scale(1.06); }
+  .main-nav ul a:hover::before, .main-nav ul a:focus-visible::before{ opacity: 1; transform: scale(1); }
+  .main-nav ul a:active{ transform: scale(.98); }
+  /* current page: a duller, desaturated pill so it reads as "you are here", not "hover me" */
+  .main-nav ul a[aria-current="page"]{ color: var(--text-dim); }
+  /* current page: crisp hard-edged pill (no blur) so it reads as a fixed indicator */
+  .main-nav ul a[aria-current="page"]::before{
+    opacity: 1; transform: scale(1);
+    inset: 0;
+    filter: blur(0px);
+    background: rgba(255, 255, 255, .10);
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 14px;
+  }
+  /* hovering the current page restores the soft blurred glow */
+  .main-nav ul a[aria-current="page"]:hover, .main-nav ul a[aria-current="page"]:focus-visible{ color: var(--text); }
+  .main-nav ul a[aria-current="page"]:hover::before, .main-nav ul a[aria-current="page"]:focus-visible::before{
+    filter: blur(9px);
+    background: linear-gradient(100deg, rgba(255,93,115,.42), rgba(255,184,77,.26));
+    border-color: transparent;
+  }
+  /* the pill is the active indicator on mobile — drop the desktop underline bar */
+  .main-nav a[aria-current="page"]::after{ display: none; }
+
+  .main-nav .btn{ margin-top: .7rem; width: 100%; }
   .nav-toggle{ display:flex; }
 }
 
