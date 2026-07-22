@@ -325,8 +325,12 @@ section{ position: relative; z-index: 2; padding: 96px 0; }
   gap: 3.5rem;
   align-items: start;
 }
-@media (max-width: 860px){ .essay{ grid-template-columns: 1fr; gap: 2rem; } }
 .essay-label{ position: sticky; top: 110px; }
+@media (max-width: 860px){
+  .essay{ grid-template-columns: 1fr; gap: 2rem; }
+  /* single-column: don't pin the heading or it overlaps the body text */
+  .essay-label{ position: static; top: auto; }
+}
 .essay-label .eyebrow{ margin-bottom: .6rem; }
 .essay-label h2{ font-size: clamp(1.7rem, 3.4vw, 2.4rem); color: var(--text); }
 .essay-body p{ color: var(--text-dim); font-size: 1.06rem; margin: 0 0 1.3em; }
