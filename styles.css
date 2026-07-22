@@ -118,8 +118,9 @@ section{ position: relative; z-index: 2; padding: 96px 0; }
 .site-header{
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   background: rgba(21, 18, 31, .72);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  /* lighter blur: a 14px fixed backdrop-filter re-blurs every scroll frame and drove the jank */
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
   border-bottom: 1px solid rgba(255,255,255,.06);
   transition: border-color .3s var(--ease);
 }
@@ -273,17 +274,28 @@ section{ position: relative; z-index: 2; padding: 96px 0; }
 @media (max-width: 560px){ .value-grid{ grid-template-columns: 1fr; } }
 
 .value-card{
+  position: relative;
   background: var(--bg-alt);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: 1.9rem 1.6rem;
-  transition: transform .4s var(--spring), border-color .3s var(--ease), background .3s var(--ease);
+  /* animate only compositor-friendly props (no background repaint per frame) */
+  transition: transform .4s var(--spring), border-color .3s var(--ease);
+  will-change: transform;
+}
+/* darker hover fill fades via a GPU-composited layer instead of a background repaint */
+.value-card::after{
+  content:""; position:absolute; inset:0; border-radius:inherit;
+  background: var(--bg-alt-2);
+  opacity:0; transition: opacity .3s var(--ease);
+  z-index:0; pointer-events:none;
 }
 .value-card:hover{
   transform: translateY(-8px) rotate(-.6deg);
   border-color: var(--coral-dim);
-  background: var(--bg-alt-2);
 }
+.value-card:hover::after{ opacity:1; }
+.value-card > *{ position:relative; z-index:1; }
 .value-card .icon{
   width: 46px; height:46px; margin-bottom: 1.1rem;
   border-radius: 12px;
