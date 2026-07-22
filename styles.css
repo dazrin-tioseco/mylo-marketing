@@ -158,6 +158,10 @@ section{ position: relative; z-index: 2; padding: 96px 0; }
   background: linear-gradient(90deg, var(--coral), var(--amber));
   border-radius: 3px;
 }
+/* The nav "Book Now" is an <a> inside .main-nav, so .main-nav a (higher
+   specificity than .btn) would strip the button's horizontal padding.
+   Restore the pill padding so the label stays fully encased. */
+.main-nav a.btn{ padding: .85em 1.6em; }
 
 .btn{
   display:inline-flex; align-items:center; justify-content:center; gap:.5em;
