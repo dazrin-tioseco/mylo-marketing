@@ -291,7 +291,7 @@ section{ position: relative; z-index: 2; padding: 96px 0; }
   z-index:0; pointer-events:none;
 }
 .value-card:hover{
-  transform: translateY(-8px) rotate(-.6deg);
+  transform: translateY(-8px);
   border-color: var(--coral-dim);
 }
 .value-card:hover::after{ opacity:1; }
@@ -507,12 +507,21 @@ section{ position: relative; z-index: 2; padding: 96px 0; }
   border-top: 4px solid var(--tier-color);
   border-radius: var(--radius-md);
   padding: 2rem 1.6rem 1.8rem;
-  transition: transform .4s var(--spring), box-shadow .3s var(--ease), border-color .3s;
+  /* animate only transform; the lift shadow is faded via a composited layer below */
+  transition: transform .4s var(--spring), border-color .3s;
+  will-change: transform;
+}
+/* lift shadow as a GPU-composited layer (opacity fade) instead of animating box-shadow */
+.tier-card::after{
+  content:""; position:absolute; inset:0; border-radius:inherit;
+  box-shadow: 0 20px 40px -18px rgba(0,0,0,.55);
+  opacity:0; transition: opacity .3s var(--ease);
+  pointer-events:none; z-index:-1;
 }
 .tier-card:hover{
   transform: translateY(-10px);
-  box-shadow: 0 20px 40px -18px rgba(0,0,0,.55);
 }
+.tier-card:hover::after{ opacity:1; }
 .tier-card.is-featured{
   background: var(--bg-alt-2);
   border-color: var(--tier-color);
