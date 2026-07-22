@@ -202,6 +202,11 @@ section{ position: relative; z-index: 2; padding: 96px 0; }
 @media (max-width: 860px){
   .main-nav{
     position: fixed; inset: 76px 0 0 0;
+    /* explicit height: relying on top+bottom stretch collapsed the panel to
+       its padding, leaving most items floating with no background behind them */
+    height: calc(100vh - 76px);
+    height: calc(100dvh - 76px);
+    overflow-y: auto;
     background: var(--bg);
     flex-direction: column; justify-content: flex-start;
     padding: 2.5rem 24px;
@@ -210,9 +215,16 @@ section{ position: relative; z-index: 2; padding: 96px 0; }
     transition: opacity .3s var(--ease), transform .3s var(--ease), visibility .3s;
   }
   .main-nav.open{ opacity:1; visibility: visible; transform: translateY(0); }
-  .main-nav ul{ flex-direction: column; gap: 1.6rem; width:100%; }
+  .main-nav ul{ flex-direction: column; gap: .6rem; width:100%; }
   .main-nav a{ font-size: 1.4rem; }
-  .main-nav .btn{ margin-top: .5rem; width: 100%; }
+  .main-nav ul a{
+    display: block; width: 100%;
+    padding: .55em .9em; border-radius: 12px;
+    transition: background .2s var(--ease), color .2s var(--ease);
+  }
+  .main-nav ul a:hover, .main-nav ul a:focus-visible{ background: var(--bg-alt-2); color: var(--text); }
+  .main-nav ul a[aria-current="page"]{ background: var(--bg-alt); }
+  .main-nav .btn{ margin-top: .8rem; width: 100%; }
   .nav-toggle{ display:flex; }
 }
 
